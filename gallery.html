@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery | Lovely Beauty Studio</title>
+  <style>
+    :root {
+      --purple: #7c3aed;
+      --purple-dark: #6d28d9;
+      --purple-light: #a78bfa;
+      --purple-50: #f5f3ff;
+      --white: #ffffff;
+      --gray-50: #fafafa;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+      --dark-900: #030712;
+      --whatsapp: #25d366;
+
+      --shadow-sm: 0 2px 10px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 30px rgba(124, 58, 237, 0.15);
+
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-full: 50%;
+
+      --transition: 0.3s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--gray-900);
+      background: var(--gray-50);
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; transition: color var(--transition); }
+    ul { list-style: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    /* Header */
+    header {
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--purple);
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+    }
+    .nav-links a {
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--purple); }
+
+    /* Page Header */
+    .page-header {
+      background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+      color: var(--white);
+      text-align: center;
+      padding: 80px 0 60px;
+    }
+    .page-header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+    .page-header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+      background: var(--white);
+      padding: 40px 0;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 68px;
+      z-index: 40;
+    }
+    .tabs-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 12px 28px;
+      background: var(--gray-50);
+      color: var(--gray-600);
+      border: 2px solid transparent;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .filter-btn:hover {
+      border-color: var(--purple-light);
+      color: var(--purple);
+    }
+    .filter-btn.active {
+      background: var(--purple);
+      color: var(--white);
+      border-color: var(--purple);
+    }
+
+    /* Gallery Grid */
+    .gallery-section {
+      padding: 60px 0 90px;
+    }
+    .gallery-grid {
+      display: grid; /* FIXED: changed from block to grid */
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 28px;
+    }
+    .gallery-item {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--white);
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition);
+      opacity: 1;
+      transform: scale(1);
+    }
+    .gallery-item.hidden {
+      display: none;
+    }
+    .gallery-item:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+    }
+    .gallery-item img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+    .gallery-item:hover img {
+      transform: scale(1.08);
+    }
+    .item-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(17, 24, 39, 0.95));
+      color: var(--white);
+      padding: 80px 20px 20px;
+      transform: translateY(100%);
+      transition: transform var(--transition);
+    }
+    .gallery-item:hover .item-overlay { /* FIXED: Added space before .item-overlay */
+      transform: translateY(0);
+    }
+    .item-overlay h4 {
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+    .item-overlay p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    .item-tag {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--purple);
+      color: var(--white);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s;
+    }
+    .lightbox.active { display: flex; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .lightbox-content {
+      max-width: 90%;
+      max-height: 80vh;
+      position: relative;
+    }
+    .lightbox img {
+      max-width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -45px;
+      right: 0;
+      color: var(--white);
+      font-size: 2.5rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      transition: transform var(--transition);
+    }
+    .lightbox-close:hover { transform: scale(1.2); }
+    .lightbox-caption {
+      text-align: center;
+      color: var(--white);
+      margin-top: 16px;
+      font-size: 1.1rem;
+    }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: var(--white);
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      backdrop-filter: blur(4px);
+    }
+    .lightbox-nav:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .lightbox-prev { left: -70px; }
+    .lightbox-next { right: -70px; }
+
+    /* CTA Section */
+    .gallery-cta {
+      background: var(--purple-50);
+      text-align: center;
+      padding: 80px 0;
+    }
+    .gallery-cta h2 {
+      font-size: 2.2rem;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+      font-weight: 800;
+    }
+    .gallery-cta p {
+      color: var(--gray-600);
+      font-size: 1.1rem;
+      margin-bottom: 32px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 16px 36px;
+      background: var(--purple);
+      color: var(--white);
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: transform var(--transition);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      background: var(--purple-dark);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--dark-900);
+      color: #6b7280;
+      text-align: center;
+      padding: 32px 0;
+      font-size: 0.9rem;
+    }
+
+    /* WhatsApp Float */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 60px;
+      height: 60px;
+      background: var(--whatsapp);
+      color: var(--white);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+      cursor: pointer;
+      transition: all var(--transition);
+      z-index: 100;
+      animation: pulse 2s infinite;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); }
+      50% { box-shadow: 0 4px 30px rgba(37, 211, 102, 0.7); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page-header h1 { font-size: 2.2rem; }
+      .page-header p { font-size: 1rem; }
+      .nav-links { display: none; }
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+      .filter-tabs {
+        top: 60px;
+        padding: 24px 0;
+      }
+      .filter-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+      .lightbox-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+      .lightbox-prev { left: 10px; }
+      .lightbox-next { right: 10px; }
+      .whatsapp-float {
+        width: 56px;
+        height: 56px;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+    @media (max-width: 480px) {
+      .gallery-grid { gap: 12px; }
+      .item-overlay { padding: 60px 12px 16px; }
+      .item-overlay h4 { font-size: 1rem; }
+      .item-overlay p { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a href="index.html" class="logo">Lovely Beauty Studio</a>
+        <ul class="nav-links">
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="index.html#work">Our Work</a></li>
+          <li><a href="gallery.html" class="active">Gallery</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-header">
+    <div class="container">
+      <h1>Our Gallery</h1>
+      <p>Real clients. Real transformations. From Lagos to London, Atlanta to Dubai.</p>
+    </div>
+  </div>
+
+  <div class="filter-tabs">
+    <div class="container">
+      <div class="tabs-wrap">
+        <button class="filter-btn active" data-filter="all">All Work</button>
+        <button class="filter-btn" data-filter="locs">Dreadlocks</button>
+        <button class="filter-btn" data-filter="braids">Braids</button>
+        <button class="filter-btn" data-filter="wigs">Wigs</button>
+        <button class="filter-btn" data-filter="styles">Styling</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="gallery-section">
+    <div class="container">
+      <div class="gallery-grid" id="galleryGrid">
+        <div class="gallery-item" data-category="locs" data-caption="Starter Locs - Comb Coils">
+          <span class="item-tag">Locs</span>
+          <img src="img/5.jpg" alt="Starter Locs">
+          <div class="item-overlay">
+            <h4>Starter Locs</h4>
+            <p>Comb Coils Method</p>
+          </div>
+        </div> <div class="gallery-item" data-category="locs" data-caption="Loc Retwist - Barrel Style">
+          <span class="item-tag">Locs</span>
+          <img src="img/6.jpg" alt="Loc Retwist">
+          <div class="item-overlay">
+            <h4>Loc Maintenance</h4>
+            <p>Retwist + Barrel Style</p>
+          </div>
+        </div>
+        
+        <div class="gallery-item" data-category="locs" data-caption="Instant Locs - 2 Day Install">
+          <span class="item-tag">Locs</span>
+          <img src="img/3.jpg" alt="Instant Locs">
+          <div class="item-overlay">
+            <h4>Instant Locs</h4>
+            <p>Full Head, 2-Day Install</p>
+          </div>
+        </div>
+        
+        <div class="gallery-item" data-category="locs" data-caption="Loc Extensions - Human Hair">
+          <span class="item-tag">Locs</span>
+          <img src="img/4.jpg" alt="Loc Extensions">
+          <div class="item-overlay">
+            <h4>Loc Extensions</h4>
+            <p>100% Human Hair</p>
+          </div>
+        </div>
+
+        <div class="gallery-item" data-category="braids" data-caption="Knotless Braids - Medium Waist Length">
+          <span class="item-tag">Braids</span>
+          <img src="img/braid1.jpg" alt="Knotless Braids">
+          <div class="item-overlay">
+            <h4>Knotless Braids</h4>
+            <p>Medium, Waist Length</p>
+          </div>
+        </div> <div class="gallery-item" data-category="braids" data-caption="Box Braids - Large Jumbo">
+          <span class="item-tag">Braids</span>
+          <img src="img/braid2.jpg" alt="Box Braids">
+          <div class="item-overlay">
+            <h4>Box Braids</h4>
+            <p>Large Jumbo Size</p>
+          </div>
+        </div>
+        
+        <div class="gallery-item" data-category="braids" data-caption="Stitch Braids - Feed In Cornrows">
+          <span class="item-tag">Braids</span>
+          <img src="img/braid3.jpg" alt="Stitch Braids">
+          <div class="item-overlay">
+            <h4>Stitch Braids</h4>
+            <p>Feed-In Cornrows</p>
+          </div>
+        </div>
+        
+        <div class="gallery-item" data-category="braids" data-caption="Goddess Braids - Curly Ends">
+          <span class="item-tag">Braids</span>
+          <img src="img/braid4.jpg" alt="Goddess Braids">
+          <div class="item-overlay">
+            <h4>Goddess Braids</h4>
+            <p>With Curly Ends</p>
+          </div>
+        </div>
+
+        <div class="gallery-item" data-category="wigs" data-caption="Glueless Lace Front - Body Wave">
+          <span class="item-tag">Wigs</span>
+          <img src="img/gallery-wig1.jpg" alt="Lace Front Wig">
+          <div class="item-overlay">
+            <h4>Glueless Lace Front</h4>
+            <p>Body Wave, 24"</p>
+          </div>
+        </div>
+        
+        <div class="gallery-item" data-category="wigs" data-caption="Custom Color Wig - Honey Blonde">
+          <span class="item-tag">Wigs</span>
+          <img src="img/gallery-wig2.jpg" alt="Custom Color Wig">
+          <div class="item-overlay">
+            <h4>Custom Color</h4>
+            <p>Honey Blonde Melt</p>
+          </div>
+        </div> <div class="gallery-item" data-category="wigs" data-caption="360 Lace Wig - Curly Install">
+          <span class="item-tag">Wigs</span>
+          <img src="img/gallery-wig3.jpg" alt="360 Lace Wig">
+          <div class="item-overlay">
+            <h4>360 Lace Wig</h4>
+            <p>Deep Curly Install</p>
+          </div>
+        </div>
+        
+        <div class="gallery-item" data-category="wigs" data-caption="U-Part Wig - Natural Blend">
+          <span class="item-tag">Wigs</span>
+          <img src="img/gallery-wig4.jpg" alt="U-Part Wig">
+          <div class="item-overlay">
+            <h4>U-Part Wig</h4>
+            <p>Leave Out Blend</p>
+          </div>
+        </div>
+
+        <div class="gallery-item" data-category="styles" data-caption="Updo - Bridal Loc Style">
+          <span class="item-tag">Styling</span>
+          <img src="img/gallery-style1.jpg" alt="Bridal Loc Updo">
+          <div class="item-overlay">
+            <h4>Bridal Updo</h4>
+            <p>Locs Styled for Wedding</p>
+          </div>
+        </div>
+        
+        <div class="gallery-item" data-category="styles" data-caption="Half Up Half Down - Braids">
+          <span class="item-tag">Styling</span>
+          <img src="img/gallery-style2.jpg" alt="Half Up Half Down">
+          <div class="item-overlay">
+            <h4>Half Up Half Down</h4>
+            <p>Braids with Curls</p>
+          </div>
+        </div>
+        
+        <div class="gallery-item" data-category="styles" data-caption="Loc Ponytail - High Barrel">
+          <span class="item-tag">Styling</span>
+          <img src="img/gallery-style3.jpg" alt="Loc Ponytail">
+          <div class="item-overlay">
+            <h4>Loc Ponytail</h4>
+            <p>High Barrel Style</p>
+          </div>
+        </div>
+        
+        <div class="gallery-item" data-category="styles" data-caption="Braid Bob - Blunt Cut">
+          <span class="item-tag">Styling</span>
+          <img src="img/gallery-style4.jpg" alt="Braid Bob">
+          <div class="item-overlay">
+            <h4>Braid Bob</h4>
+            <p>Blunt Cut, Shoulder Length</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-cta">
+    <div class="container">
+      <h2>Love What You See?</h2>
+      <p>Let’s create your next masterpiece. Book your appointment today.</p>
+      <a href="index.html#contact" class="btn">Book Your Crown</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      &copy; 2026 Lovely Beauty Studio. All rights reserved. | Nigeria &rarr; UK &rarr; USA &rarr; Dubai &rarr; Canada
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev">&lsaquo;</button>
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose">&times;</button>
+      <img src="" alt="" id="lightboxImg">
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext">&rsaquo;</button>
+  </div>
+
+  <a href="https://wa.me/234XXXXXXXXXX?text=Hi%20Lovely%20Beauty%20Studio%2C%20I%20saw%20your%20gallery%20and%20want%20to%20book"
+     class="whatsapp-float"
+     target="_blank"
+     aria-label="Chat on WhatsApp">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.3-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0.16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+    </svg>
+  </a>
+
+  <script>
+    // Filter functionality
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter');
+
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        galleryItems.forEach(item => {
+          if (filter === 'all' || item.getAttribute('data-category') === filter) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+        updateVisibleItems(); // Update internal array for lightbox when filters change
+      });
+    });
+
+    // Lightbox with navigation FIXED: Added all missing functionality logic
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+    let currentIndex = 0;
+    let visibleItems = [];
+
+    function updateVisibleItems() {
+      visibleItems = Array.from(galleryItems).filter(item => !item.classList.contains('hidden'));
+    }
+
+    function showImage(index) {
+      if (index < 0) index = visibleItems.length - 1;
+      if (index >= visibleItems.length) index = 0;
+      
+      currentIndex = index;
+      const currentItem = visibleItems[currentIndex];
+      const imgSrc = currentItem.querySelector('img').getAttribute('src');
+      const captionText = currentItem.getAttribute('data-caption');
+      
+      lightboxImg.setAttribute('src', imgSrc);
+      lightboxCaption.textContent = captionText;
+    }
+
+    // Open Lightbox on Click
+    galleryItems.forEach(item => {
+      item.addEventListener('click', () => {
+        updateVisibleItems();
+        const index = visibleItems.indexOf(item);
+        if(index !== -1) {
+          showImage(index);
+          lightbox.classList.add('active');
+        }
+      });
+    });
+
+    // Close Lightbox
+    lightboxClose.addEventListener('click', () => {
+      lightbox.classList.remove('active');
+    });
+
+    // Close on background click
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        lightbox.classList.remove('active');
+      }
+    });
+
+    // Next/Prev Events
+    lightboxNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showImage(currentIndex + 1);
+    });
+
+    lightboxPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showImage(currentIndex - 1);
+    });
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') lightbox.classList.remove('active');
+      if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+      if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+    });
+
+    // Run once on load
+    updateVisibleItems();
+  </script>
+</body>
+</html>
