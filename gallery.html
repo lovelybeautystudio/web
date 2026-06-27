@@ -626,4 +626,66 @@
 
     function updateVisibleItems() {
       visibleItems = Array.from(galleryItems).filter(item => !item.classList.contains('hidden'));
-    
+    }
+
+    function showImage(index) {
+      if (index < 0) index = visibleItems.length - 1;
+      if (index >= visibleItems.length) index = 0;
+      
+      currentIndex = index;
+      const currentItem = visibleItems[currentIndex];
+      const imgSrc = currentItem.querySelector('img').getAttribute('src');
+      const captionText = currentItem.getAttribute('data-caption');
+      
+      lightboxImg.setAttribute('src', imgSrc);
+      lightboxCaption.textContent = captionText;
+    }
+
+    // Open Lightbox on Click
+    galleryItems.forEach(item => {
+      item.addEventListener('click', () => {
+        updateVisibleItems();
+        const index = visibleItems.indexOf(item);
+        if(index !== -1) {
+          showImage(index);
+          lightbox.classList.add('active');
+        }
+      });
+    });
+
+    // Close Lightbox
+    lightboxClose.addEventListener('click', () => {
+      lightbox.classList.remove('active');
+    });
+
+    // Close on background click
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        lightbox.classList.remove('active');
+      }
+    });
+
+    // Next/Prev Events
+    lightboxNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showImage(currentIndex + 1);
+    });
+
+    lightboxPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showImage(currentIndex - 1);
+    });
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') lightbox.classList.remove('active');
+      if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+      if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+    });
+
+    // Run once on load
+    updateVisibleItems();
+  </script>
+</body>
+</html>
